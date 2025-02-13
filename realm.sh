@@ -243,7 +243,7 @@ update_script() {
     echo -e "${GREEN}检查更新...${NC}"
     
     # 下载远程版本号
-    remote_version=$(curl -s https://raw.githubusercontent.com/你的用户名/你的仓库名/main/version)
+    remote_version=$(curl -s https://raw.githubusercontent.com/jinqians/realm/refs/heads/main/realm.sh | grep "^VERSION=" | cut -d'"' -f2)
     if [ $? -ne 0 ]; then
         echo -e "${RED}检查更新失败：无法获取远程版本信息${NC}"
         return 1
@@ -263,7 +263,7 @@ update_script() {
     fi
     
     # 下载新版本脚本
-    wget -O /tmp/realm.sh https://raw.githubusercontent.com/jinqians/realm/main/realm.sh
+    wget -O /tmp/realm.sh https://raw.githubusercontent.com/jinqians/realm/refs/heads/main/realm.sh
     
     if [ $? -eq 0 ]; then
         # 检查下载的文件是否存在且不为空
