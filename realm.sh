@@ -2,7 +2,7 @@
 
 # =========================================
 # 作者: jinqians
-# 日期: 2025年2月
+# 日期: 2025年4月
 # 网站：jinqians.com
 # 描述: 这个脚本用于安装、卸载、realm转发
 # =========================================
@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # 在脚本开头添加版本号
-VERSION="1.0.0"
+VERSION="1.1"
 
 # 检查realm是否已安装
 if [ -f "/root/realm/realm" ]; then
@@ -93,7 +93,8 @@ deploy_realm() {
     touch /root/realm/config.toml
     
     # 创建服务文件
-    echo "[Unit]
+    cat > /etc/systemd/system/realm.service << EOF
+[Unit]
 Description=realm
 After=network-online.target
 Wants=network-online.target systemd-networkd-wait-online.service
@@ -107,9 +108,15 @@ ExecStart=/root/realm/realm -c /root/realm/config.toml
 WorkingDirectory=/root/realm
 
 [Install]
-WantedBy=multi-user.target" > /etc/systemd/system/realm.service
+WantedBy=multi-user.target
+EOF
 
+    # 设置正确的权限
+    chmod 644 /etc/systemd/system/realm.service
+    
     systemctl daemon-reload
+    systemctl enable realm.service
+    
     # 更新realm状态变量
     realm_status="已安装"
     realm_status_color="\033[0;32m"
